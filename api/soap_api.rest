@@ -1,0 +1,14 @@
+// https://www.msxfaq.de/sonst/bastelbude/fritz-upnp.htm
+// https://www.msxfaq.de/code/powershell/pssoap.htm#weitere_urls
+
+@hostname = fritz.box:49000
+
+###
+
+GET /igddesc.xml HTTP/1.1
+Host: {{hostname}}
+
+###
+
+GET /any.xml HTTP/1.1
+Host: {{hostname}}

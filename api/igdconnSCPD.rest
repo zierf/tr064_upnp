@@ -1,0 +1,189 @@
+@hostname = fritz.box:49000
+@contentType = text/xml; charset="utf-8" User-Agent: AVM UPnP/1.0 Client 1.0
+
+###
+
+GET /igdconnSCPD.xml HTTP/1.1
+Host: {{hostname}}
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#GetConnectionTypeInfo
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetConnectionTypeInfo xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetConnectionTypeInfo>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#GetAutoDisconnectTime
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetAutoDisconnectTime xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetAutoDisconnectTime>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#GetIdleDisconnectTime
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetIdleDisconnectTime xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetIdleDisconnectTime>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetStatusInfo xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetStatusInfo>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#GetNATRSIPStatus
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetNATRSIPStatus xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetNATRSIPStatus>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#GetExternalIPAddress
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetExternalIPAddress xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetExternalIPAddress>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#X_AVM_DE_GetExternalIPv6Address
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:X_AVM_DE_GetExternalIPv6Address xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
+        </u:X_AVM_DE_GetExternalIPv6Address>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#X_AVM_DE_GetIPv6Prefix
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:X_AVM_DE_GetIPv6Prefix xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:X_AVM_DE_GetIPv6Prefix>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#X_AVM_DE_GetDNSServer
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:X_AVM_DE_GetDNSServer xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:X_AVM_DE_GetDNSServer>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANIPConn1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPConnection:1#X_AVM_DE_GetIPv6DNSServer
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:X_AVM_DE_GetIPv6DNSServer xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
+        </u:X_AVM_DE_GetIPv6DNSServer>
+    </soap:Body>
+</soap:Envelope>

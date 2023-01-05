@@ -1,0 +1,26 @@
+@hostname = fritz.box:49000
+@contentType = text/xml; charset="utf-8" User-Agent: AVM UPnP/1.0 Client 1.0
+
+###
+
+GET /igd2ipv6fwcSCPD.xml HTTP/1.1
+Host: {{hostname}}
+
+###
+
+POST /igd2upnp/control/WANIPv6Firewall1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANIPv6FirewallControl:1#GetFirewallStatus
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetFirewallStatus xmlns:u="urn:schemas-upnp-org:service:WANIPv6FirewallControl:1">
+        </u:GetFirewallStatus>
+    </soap:Body>
+</soap:Envelope>

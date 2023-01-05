@@ -1,0 +1,153 @@
+@hostname = fritz.box:49000
+@contentType = text/xml; charset="utf-8" User-Agent: AVM UPnP/1.0 Client 1.0
+
+###
+
+GET /igdicfgSCPD.xml HTTP/1.1
+Host: {{hostname}}
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetCommonLinkProperties xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
+        </u:GetCommonLinkProperties>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetTotalBytesSent
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetTotalBytesSent xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:GetTotalBytesSent>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetTotalBytesReceived
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetTotalBytesReceived xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:GetTotalBytesReceived>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetTotalPacketsSent
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetTotalPacketsSent xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:GetTotalPacketsSent>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetTotalPacketsReceived
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetTotalPacketsReceived xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:GetTotalPacketsReceived>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetAddonInfos xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:GetAddonInfos>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#X_AVM_DE_GetDsliteStatus
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:X_AVM_DE_GetDsliteStatus xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
+        </u:X_AVM_DE_GetDsliteStatus>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANCommonIFC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#X_AVM_DE_GetIPTVInfos
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:X_AVM_DE_GetIPTVInfos xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:X_AVM_DE_GetIPTVInfos>
+    </soap:Body>
+</soap:Envelope>

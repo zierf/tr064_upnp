@@ -1,0 +1,115 @@
+@hostname = fritz.box:49000
+@contentType = text/xml; charset="utf-8" User-Agent: AVM UPnP/1.0 Client 1.0
+
+###
+
+GET /igddslSCPD.xml HTTP/1.1
+Host: {{hostname}}
+
+###
+
+POST /igdupnp/control/WANDSLLinkC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetDSLLinkInfo
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetDSLLinkInfo xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1"></u:GetDSLLinkInfo>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANDSLLinkC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetAutoConfig
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetAutoConfig xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1"></u:GetAutoConfig>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANDSLLinkC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetModulationType
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetModulationType xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1"></u:GetModulationType>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANDSLLinkC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetDestinationAddress
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetDestinationAddress xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1"></u:GetDestinationAddress>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANDSLLinkC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetATMEncapsulation
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetATMEncapsulation xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1"></u:GetATMEncapsulation>
+    </soap:Body>
+</soap:Envelope>
+
+###
+
+POST /igdupnp/control/WANDSLLinkC1 HTTP/1.1
+SOAPACTION: urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetFCSPreserved
+Content-Type: {{contentType}}
+Host: {{hostname}}
+
+<?xml version="1.0"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+>
+    <soap:Header></soap:Header>
+    <soap:Body>
+        <u:GetFCSPreserved xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1"></u:GetFCSPreserved>
+    </soap:Body>
+</soap:Envelope>
