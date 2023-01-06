@@ -83,7 +83,7 @@ fn default_headers() -> HeaderMap {
     headers
 }
 
-pub async fn get_soap_action(
+pub(crate) async fn get_soap_action(
     host: UpnpHost,
     endpoint: impl Into<String>,
     service_name: impl Into<String>,
