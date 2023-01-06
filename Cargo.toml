@@ -12,8 +12,10 @@ crate-type = ["rlib", "cdylib"]
 default = []
 
 [dependencies]
-serde = { version = "1.0.152", features = ["derive"] }
-serde-xml-rs = "0.6.0"
+reqwest = { version = "0.11", features = ["blocking"] }
+serde = { version = "1.0", features = ["derive"] }
+serde-xml-rs = "0.6"
+tokio = { version = "1.24", features = ["full"] }
 
 [profile.release]
 codegen-units = 1
