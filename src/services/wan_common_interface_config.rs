@@ -1,11 +1,11 @@
 use crate::{
     request_helper::{get_soap_action, UpnpHost},
-    xml_nodes,
+    xml_nodes_pascal_case,
 };
 
 use serde_xml_rs::from_str;
 
-xml_nodes! {
+xml_nodes_pascal_case! {
     struct Envelope {
         body: Body,
     }
@@ -63,7 +63,7 @@ xml_nodes! {
     }
 }
 
-pub async fn get_addon_infos(host: UpnpHost) -> Result<GetAddonInfosResponse, reqwest::Error> {
+pub async fn get_addon_infos(host: &UpnpHost) -> Result<GetAddonInfosResponse, reqwest::Error> {
     let result = get_soap_action(
         host,
         "/igdupnp/control/WANCommonIFC1",
