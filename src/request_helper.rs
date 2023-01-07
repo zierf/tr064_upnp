@@ -64,8 +64,11 @@ impl UpnpHostBuilder {
     }
 }
 
-pub(crate) async fn get_api_description_xml(host: &UpnpHost) -> Result<String, reqwest::Error> {
-    let url = endpoint_url(host, "/igddesc.xml");
+pub(crate) async fn get_api_xml(
+    host: &UpnpHost,
+    endpoint: &str,
+) -> Result<String, reqwest::Error> {
+    let url = endpoint_url(host, endpoint);
 
     let client = reqwest::Client::builder()
         .http1_title_case_headers()
