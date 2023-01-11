@@ -84,13 +84,10 @@ pub(crate) async fn get_api_xml(
 pub(crate) async fn get_soap_action(
     host: &UpnpHost,
     endpoint: &str,
-    service_name: impl Into<String>,
-    action: impl Into<String>,
+    service_type: &str,
+    action: &str,
 ) -> Result<String, reqwest::Error> {
-    let service_name: String = service_name.into();
-    let action: String = action.into();
-
-    let soap_action: String = format!("urn:schemas-upnp-org:service:{service_name}#{action}");
+    let soap_action: String = format!("{service_type}#{action}");
 
     let mut headers = default_headers();
 
@@ -111,7 +108,7 @@ pub(crate) async fn get_soap_action(
             >
                 <soap:Header></soap:Header>
                 <soap:Body>
-                    <u:{action} xmlns:u="urn:schemas-upnp-org:service:{service_name}"></u:{action}>
+                    <u:{action} xmlns:u="{service_type}"></u:{action}>
                 </soap:Body>
             </soap:Envelope>
         "#

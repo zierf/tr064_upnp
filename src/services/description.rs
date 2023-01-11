@@ -7,102 +7,102 @@ use serde_xml_rs::from_str;
 
 xml_nodes_camel_case! {
     pub struct SpecVersion {
-        major: usize,
-        minor: usize,
+        pub major: usize,
+        pub minor: usize,
     }
 }
 
 xml_nodes_camel_case! {
     pub struct ApiDescription {
-        spec_version: SpecVersion,
-        device: Device,
+        pub spec_version: SpecVersion,
+        pub device: Device,
     }
 
     pub struct Device {
-        device_type: String,
-        friendly_name: String,
-        manufacturer: String,
+        pub device_type: String,
+        pub friendly_name: String,
+        pub manufacturer: String,
         #[serde(rename = "manufacturerURL")]
-        manufacturer_url: String,
-        model_description: String,
-        model_name: String,
-        model_number: String,
+        pub manufacturer_url: String,
+        pub model_description: String,
+        pub model_name: String,
+        pub model_number: String,
         #[serde(rename = "modelURL")]
-        model_url: String,
+        pub model_url: String,
         #[serde(rename = "UDN")]
-        udn: String,
+        pub udn: String,
         #[serde(rename = "UPC")]
-        upc: Option<String>,
-        icon_list: Option<IconList>,
-        service_list: Option<ServiceList>,
-        device_list: Option<DeviceList>,
+        pub upc: Option<String>,
+        pub icon_list: Option<IconList>,
+        pub service_list: Option<ServiceList>,
+        pub device_list: Option<DeviceList>,
         #[serde(rename = "presentationURL")]
-        presentation_url: Option<String>,
+        pub presentation_url: Option<String>,
     }
 
     pub struct IconList {
         #[serde(rename = "$value")]
-        icons: Vec<Icon>,
+        pub icons: Vec<Icon>,
     }
 
     pub struct Icon {
-        mimetype: String,
-        width: usize,
-        height: usize,
-        depth: usize,
-        url: String,
+        pub mimetype: String,
+        pub width: usize,
+        pub height: usize,
+        pub depth: usize,
+        pub url: String,
     }
 
     pub struct ServiceList {
         #[serde(rename = "$value")]
-        services: Vec<Service>,
+        pub services: Vec<Service>,
     }
 
     pub struct Service {
-        service_type: String,
-        service_id: String,
+        pub service_type: String,
+        pub service_id: String,
         #[serde(rename = "controlURL")]
-        control_url: String,
+        pub control_url: String,
         #[serde(rename = "eventSubURL")]
-        event_sub_url: String,
+        pub event_sub_url: String,
         #[serde(rename = "SCPDURL")]
-        scpdurl: String,
+        pub scpd_url: String,
     }
 
     pub struct DeviceList {
         #[serde(rename = "$value")]
-        devices: Vec<Device>,
+        pub devices: Vec<Device>,
     }
 }
 
 xml_nodes_camel_case! {
     pub struct ServiceDescription {
-        spec_version: SpecVersion,
-        action_list: ActionList,
-        service_state_table: ServiceStateTable,
+        pub spec_version: SpecVersion,
+        pub action_list: ActionList,
+        pub service_state_table: ServiceStateTable,
     }
 
     pub struct ActionList {
         #[serde(rename = "$value")]
-        actions: Vec<Action>,
+        pub actions: Option<Vec<Action>>,
     }
 
     pub struct Action {
-        name: String,
+        pub name: String,
         #[serde(rename = "argumentList")]
-        arguments: ArgumentList,
+        pub argument_list: Option<ArgumentList>,
     }
 
     pub struct ArgumentList {
         #[serde(rename = "$value")]
-        arguments: Vec<Argument>,
+        pub arguments: Vec<Argument>,
     }
 
     pub struct Argument {
-        name: String,
+        pub name: String,
         #[serde(rename = "relatedStateVariable")]
-        r#type: String,
-        direction: ArgumentDirection,
+        pub r#type: String,
+        pub direction: ArgumentDirection,
     }
 
     pub enum ArgumentDirection {
@@ -112,29 +112,29 @@ xml_nodes_camel_case! {
 
     pub struct ServiceStateTable {
         #[serde(rename = "$value")]
-        state_variables: Vec<StateVariable>,
+        pub state_variables: Option<Vec<StateVariable>>,
     }
 
     pub struct StateVariable {
-        name: String,
+        pub name: String,
         #[serde(rename = "dataType")]
-        r#type: String,
-        default_value: Option<String>,
+        pub r#type: String,
+        pub default_value: Option<String>,
         #[serde(rename = "allowedValueList")]
-        allowed_values: Option<AllowedValueList>,
+        pub allowed_value_list: Option<AllowedValueList>,
         #[serde(rename = "allowedValueRange")]
-        allowed_range: Option<AllowedValueRange>,
+        pub allowed_range: Option<AllowedValueRange>,
     }
 
     pub struct AllowedValueList {
         #[serde(rename = "$value")]
-        allowed_values: Vec<String>,
+        pub allowed_values: Vec<String>,
     }
 
     pub struct AllowedValueRange {
-        minimum: usize,
-        maximum: usize,
-        step: usize,
+        pub minimum: usize,
+        pub maximum: usize,
+        pub step: Option<usize>,
     }
 }
 

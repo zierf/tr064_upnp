@@ -1,5 +1,5 @@
 use crate::{
-    request_helper::{get_soap_action, UpnpHost},
+    request_helper::{send_soap_action, UpnpHost},
     xml_nodes_pascal_case,
 };
 
@@ -15,30 +15,30 @@ xml_nodes_pascal_case! {
     }
 
     pub struct GetAddonInfosResponse {
-        new_byte_send_rate: u32,
-        new_byte_receive_rate: u32,
-        new_packet_send_rate: u32,
-        new_packet_receive_rate: u32,
-        new_total_bytes_sent: u32,
-        new_total_bytes_received: u32,
-        new_auto_disconnect_time: u32,
-        new_idle_disconnect_time: u32,
+        pub new_byte_send_rate: u32,
+        pub new_byte_receive_rate: u32,
+        pub new_packet_send_rate: u32,
+        pub new_packet_receive_rate: u32,
+        pub new_total_bytes_sent: u32,
+        pub new_total_bytes_received: u32,
+        pub new_auto_disconnect_time: u32,
+        pub new_idle_disconnect_time: u32,
         #[serde(rename = "NewDNSServer1")]
-        new_dns_server_1: String,
+        pub new_dns_server_1: String,
         #[serde(rename = "NewDNSServer2")]
-        new_dns_server_2: String,
+        pub new_dns_server_2: String,
         #[serde(rename = "NewVoipDNSServer1")]
-        new_voip_dns_server_1: String,
+        pub new_voip_dns_server_1: String,
         #[serde(rename = "NewVoipDNSServer2")]
-        new_voip_dns_server_2: String,
-        new_upnp_control_enabled: bool,
-        new_routed_bridged_mode_both: u8,
+        pub new_voip_dns_server_2: String,
+        pub new_upnp_control_enabled: bool,
+        pub new_routed_bridged_mode_both: u8,
         #[serde(rename = "NewX_AVM_DE_TotalBytesSent64")]
-        newx_avm_de_total_bytes_sent_64: String,
+        pub newx_avm_de_total_bytes_sent_64: String,
         #[serde(rename = "NewX_AVM_DE_TotalBytesReceived64")]
-        newx_avm_de_total_bytes_received_64: String,
+        pub newx_avm_de_total_bytes_received_64: String,
         #[serde(rename = "NewX_AVM_DE_WANAccessType")]
-        newx_avm_de_wan_access_type: XAvmDeWanAccessType,
+        pub newx_avm_de_wan_access_type: XAvmDeWanAccessType,
     }
 
     pub enum XAvmDeWanAccessType {
@@ -63,11 +63,17 @@ xml_nodes_pascal_case! {
     }
 }
 
-pub async fn get_addon_infos(host: &UpnpHost) -> Result<GetAddonInfosResponse, reqwest::Error> {
-    let result = get_soap_action(
+pub async fn get_addon_infos(
+    host: &UpnpHost,
+    index: Option<usize>,
+) -> Result<GetAddonInfosResponse, reqwest::Error> {
+    let result = send_soap_action(
         host,
-        "/igdupnp/control/WANCommonIFC1",
-        "WANCommonInterfaceConfig:1",
+        &format!("/igdupnp/control/WANCommonIFC{}", index.unwrap_or(1)),
+        &format!(
+            "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:{}",
+            index.unwrap_or(1)
+        ),
         "GetAddonInfos",
     )
     .await;
