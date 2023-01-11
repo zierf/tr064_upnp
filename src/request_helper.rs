@@ -2,6 +2,8 @@ use std::ops::Add;
 
 use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE, USER_AGENT};
 
+pub static DEFAULT_HOST: &'static str = "fritz.box:49000";
+
 #[derive(Clone, Debug, Default, PartialEq)]
 pub enum Schema {
     #[default]
@@ -19,7 +21,7 @@ pub struct UpnpHost {
 impl Default for UpnpHost {
     fn default() -> Self {
         Self {
-            // "fritz.box:49000".to_socket_addrs()
+            // DEFAULT_HOST.to_socket_addrs()
             name: "fritz.box".to_owned(),
             port: 49000,
             schema: Schema::HTTP,
@@ -64,24 +66,21 @@ impl UpnpHostBuilder {
     }
 }
 
-pub(crate) async fn get_api_xml(
-    host: &UpnpHost,
-    endpoint: &str,
-) -> Result<String, reqwest::Error> {
+pub(crate) async fn get_api_xml(host: &UpnpHost, endpoint: &str) -> Result<String, reqwest::Error> {
     let url = endpoint_url(host, endpoint);
 
     let client = reqwest::Client::builder()
         .http1_title_case_headers()
         .build()?;
 
-    let builder = client.get(url).headers(default_headers());
+    let builder = client.get(url).headers(default_headers(host));
 
     let response = builder.send().await?;
 
     response.text().await
 }
 
-pub(crate) async fn get_soap_action(
+pub async fn send_soap_action(
     host: &UpnpHost,
     endpoint: &str,
     service_type: &str,
@@ -89,7 +88,7 @@ pub(crate) async fn get_soap_action(
 ) -> Result<String, reqwest::Error> {
     let soap_action: String = format!("{service_type}#{action}");
 
-    let mut headers = default_headers();
+    let mut headers = default_headers(host);
 
     headers.insert(
         "SOAPACTION",
@@ -99,20 +98,7 @@ pub(crate) async fn get_soap_action(
 
     let url = endpoint_url(host, endpoint);
 
-    let envelope = format!(
-        r#"
-            <?xml version="1.0"?>
-            <soap:Envelope
-                xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-                soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-            >
-                <soap:Header></soap:Header>
-                <soap:Body>
-                    <u:{action} xmlns:u="{service_type}"></u:{action}>
-                </soap:Body>
-            </soap:Envelope>
-        "#
-    );
+    let envelope = build_envelope(service_type, action);
 
     let client = reqwest::Client::builder()
         .http1_title_case_headers()
@@ -125,7 +111,7 @@ pub(crate) async fn get_soap_action(
     response.text().await
 }
 
-fn default_headers() -> HeaderMap {
+pub fn default_headers(host: &UpnpHost) -> HeaderMap {
     let mut headers = HeaderMap::new();
 
     headers.insert(
@@ -139,12 +125,17 @@ fn default_headers() -> HeaderMap {
 
     // allow case sensitive headers (also necessary for `SOAPACTION`).
     // https://github.com/seanmonstar/reqwest/pull/463#issue-414510806
-    headers.insert("Host", HeaderValue::from_static("fritz.box:49000"));
+    let host_address = format!("{}:{}", host.name, host.port);
+    headers.insert(
+        "Host",
+        HeaderValue::from_str(&host_address)
+            .unwrap_or_else(|_val| HeaderValue::from_static(DEFAULT_HOST)),
+    );
 
     headers
 }
 
-fn endpoint_url(host: &UpnpHost, endpoint: &str) -> String {
+pub fn endpoint_url(host: &UpnpHost, endpoint: &str) -> String {
     let protocol = match host.schema {
         Schema::HTTP => "http://".to_owned(),
         Schema::HTTPS => "https://".to_owned(),
@@ -158,4 +149,21 @@ fn endpoint_url(host: &UpnpHost, endpoint: &str) -> String {
         .add(":")
         .add(&port)
         .add(endpoint)
+}
+
+pub fn build_envelope(service_type: &str, action_name: &str) -> String {
+    format!(
+        r#"
+            <?xml version="1.0"?>
+            <soap:Envelope
+                xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+                soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+            >
+                <soap:Header></soap:Header>
+                <soap:Body>
+                    <u:{action_name} xmlns:u="{service_type}"></u:{action_name}>
+                </soap:Body>
+            </soap:Envelope>
+        "#
+    )
 }

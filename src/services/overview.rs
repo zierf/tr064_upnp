@@ -32,6 +32,8 @@ pub struct Service {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Action {
     pub name: String,
+    pub control_url: String,
+    pub soap_action: String,
     pub inputs: Vec<Argument>,
     pub outputs: Vec<Argument>,
 }
@@ -79,7 +81,7 @@ async fn create_overview_for_device(
             })
             .services
             .iter()
-            .map(|desc_service| async move { map_service_from_api(host, desc_service).await }),
+            .map(|service_entry| async move { map_service_from_api(host, service_entry).await }),
     )
     .await
     .unwrap();
@@ -114,9 +116,9 @@ async fn create_overview_for_device(
 
 async fn map_service_from_api(
     host: &UpnpHost,
-    desc_service: &super::description::Service,
+    service: &super::description::Service,
 ) -> Result<self::Service, reqwest::Error> {
-    let service_description = get_service_description(host, &desc_service.scpd_url).await?;
+    let service_description = get_service_description(host, &service.scpd_url).await?;
 
     let argument_types: Vec<StateVariable> = service_description
         .service_state_table
@@ -133,6 +135,8 @@ async fn map_service_from_api(
 
             Action {
                 name: desc_action.name.clone(),
+                control_url: service.control_url.clone(),
+                soap_action: format!("{}#{}", service.service_type, desc_action.name),
                 inputs: argument_list
                     .iter()
                     .filter(|argument| argument.direction == ArgumentDirection::In)
@@ -148,10 +152,10 @@ async fn map_service_from_api(
         .collect();
 
     let service = Service {
-        id: desc_service.service_id.clone(),
-        r#type: desc_service.service_type.clone(),
-        control_url: desc_service.control_url.clone(),
-        scpd_url: desc_service.scpd_url.clone(),
+        id: service.service_id.clone(),
+        r#type: service.service_type.clone(),
+        control_url: service.control_url.clone(),
+        scpd_url: service.scpd_url.clone(),
         actions,
     };
 
