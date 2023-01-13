@@ -2,64 +2,61 @@ use std::ops::RangeInclusive;
 
 use async_recursion::async_recursion;
 
-use crate::request_helper::UpnpHost;
+use crate::{overview_json, request_helper::UpnpHost};
 
 use super::description::{
     get_api_description, get_service_description, ArgumentDirection, StateVariable,
 };
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Device {
-    pub name: String,
-    pub r#type: String,
-    pub udn: String,
-    pub model_name: String,
-    pub model_number: String,
-    pub model_description: String,
-    pub services: Vec<self::Service>,
-    pub devices: Vec<Self>,
+overview_json! {
+    pub struct Device {
+        pub name: String,
+        pub udn: String,
+        pub r#type: String,
+        pub model_name: String,
+        pub model_number: String,
+        pub model_description: String,
+        pub url: Option<String>,
+        pub services: Vec<self::Service>,
+        pub devices: Vec<Self>,
+    }
+
+    pub struct Service {
+        pub id: String,
+        pub r#type: String,
+        pub control_url: String,
+        pub scpd_url: String,
+        pub actions: Vec<self::Action>,
+    }
+
+    pub struct Action {
+        pub name: String,
+        pub control_url: String,
+        pub soap_action: String,
+        pub inputs: Vec<Argument>,
+        pub outputs: Vec<Argument>,
+    }
+
+    pub struct Argument {
+        pub name: String,
+        pub r#type: ArgumentType,
+    }
+
+    pub struct ArgumentType {
+        pub name: String,
+        pub r#type: Option<String>,
+        pub default: Option<String>,
+        pub allowed_values: Option<Vec<String>>,
+        pub allowed_range: Option<AllowedRange>,
+    }
+
+    pub struct AllowedRange {
+        pub range: RangeInclusive<usize>,
+        pub step: Option<usize>,
+    }
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Service {
-    pub id: String,
-    pub r#type: String,
-    pub control_url: String,
-    pub scpd_url: String,
-    pub actions: Vec<self::Action>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Action {
-    pub name: String,
-    pub control_url: String,
-    pub soap_action: String,
-    pub inputs: Vec<Argument>,
-    pub outputs: Vec<Argument>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Argument {
-    pub name: String,
-    pub r#type: ArgumentType,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct ArgumentType {
-    pub name: String,
-    pub r#type: Option<String>,
-    pub default: Option<String>,
-    pub allowed_values: Option<Vec<String>>,
-    pub allowed_range: Option<AllowedRange>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct AllowedRange {
-    pub range: RangeInclusive<usize>,
-    pub step: Option<usize>,
-}
-
-pub async fn overview(host: &UpnpHost) -> Result<Device, reqwest::Error> {
+pub async fn overview(host: &UpnpHost) -> Result<self::Device, reqwest::Error> {
     let api_description = get_api_description(host).await?;
 
     let device = create_overview_for_device(host, &api_description.device).await?;
@@ -71,7 +68,7 @@ pub async fn overview(host: &UpnpHost) -> Result<Device, reqwest::Error> {
 async fn create_overview_for_device(
     host: &UpnpHost,
     device: &super::description::Device,
-) -> Result<Device, reqwest::Error> {
+) -> Result<self::Device, reqwest::Error> {
     let services: Vec<self::Service> = futures::future::try_join_all(
         device
             .service_list
@@ -100,13 +97,14 @@ async fn create_overview_for_device(
     .await
     .unwrap();
 
-    let device_overview = Device {
+    let device_overview = self::Device {
         name: device.friendly_name.clone(),
+        udn: device.udn.clone(),
         r#type: device.device_type.clone(),
         model_name: device.model_name.clone(),
         model_number: device.model_number.clone(),
         model_description: device.model_description.clone(),
-        udn: device.udn.clone(),
+        url: device.presentation_url.clone(),
         services,
         devices,
     };

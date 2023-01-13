@@ -15,3 +15,12 @@ macro_rules! xml_nodes_camel_case {
         $i
     )* }
 }
+
+#[macro_export]
+macro_rules! overview_json {
+    ($($i:item)*) => { $(
+        #[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
+        #[serde(rename_all = "camelCase")]
+        $i
+    )* }
+}

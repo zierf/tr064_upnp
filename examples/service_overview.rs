@@ -4,9 +4,9 @@ use fritz_tr064_upnp::{services, UpnpHost};
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let host: UpnpHost = Default::default();
 
-    let response = services::overview::overview(&host).await?;
+    let overview = services::overview::overview(&host).await?;
 
-    println!("{:#?}", response);
+    println!("{:#?}", overview);
 
     Ok(())
 }
