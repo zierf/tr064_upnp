@@ -1,4 +1,5 @@
 use crate::{
+    error::Result,
     request_helper::{send_soap_action, UpnpHost},
     xml_nodes_pascal_case,
 };
@@ -66,8 +67,8 @@ xml_nodes_pascal_case! {
 pub async fn get_addon_infos(
     host: &UpnpHost,
     index: Option<usize>,
-) -> Result<GetAddonInfosResponse, reqwest::Error> {
-    let result = send_soap_action(
+) -> Result<GetAddonInfosResponse> {
+    let response = send_soap_action(
         host,
         &format!("/igdupnp/control/WANCommonIFC{}", index.unwrap_or(1)),
         &format!(
@@ -76,11 +77,11 @@ pub async fn get_addon_infos(
         ),
         "GetAddonInfos",
     )
-    .await;
+    .await?;
 
-    let xml_string = result?;
+    let xml_string = response.text().await?;
 
-    let addon_infos: Envelope = from_str(&xml_string).unwrap();
+    let addon_infos: Envelope = from_str(&xml_string)?;
 
     Ok(addon_infos.body.get_addon_infos_response)
 }

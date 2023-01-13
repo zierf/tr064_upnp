@@ -1,6 +1,11 @@
 use std::ops::Add;
 
-use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE, USER_AGENT};
+use reqwest::{
+    header::{HeaderMap, HeaderValue, CONTENT_TYPE, USER_AGENT},
+    Client, Response,
+};
+
+use crate::error::{Error, Result};
 
 pub static DEFAULT_HOST: &'static str = "fritz.box:49000";
 
@@ -66,18 +71,23 @@ impl UpnpHostBuilder {
     }
 }
 
-pub(crate) async fn get_api_xml(host: &UpnpHost, endpoint: &str) -> Result<String, reqwest::Error> {
+pub(crate) async fn get_api_xml(host: &UpnpHost, endpoint: &str) -> Result<Response> {
     let url = endpoint_url(host, endpoint);
 
-    let client = reqwest::Client::builder()
-        .http1_title_case_headers()
-        .build()?;
+    let client = Client::builder().http1_title_case_headers().build()?;
 
     let builder = client.get(url).headers(default_headers(host));
 
     let response = builder.send().await?;
 
-    response.text().await
+    if !response.status().is_success() {
+        return Err(Error::StatusCodeError {
+            status_code: response.status().as_u16(),
+            message: response.text().await?,
+        });
+    }
+
+    Ok(response)
 }
 
 pub async fn send_soap_action(
@@ -85,7 +95,7 @@ pub async fn send_soap_action(
     endpoint: &str,
     service_type: &str,
     action: &str,
-) -> Result<String, reqwest::Error> {
+) -> Result<Response> {
     let soap_action: String = format!("{service_type}#{action}");
 
     let mut headers = default_headers(host);
@@ -100,15 +110,20 @@ pub async fn send_soap_action(
 
     let envelope = build_envelope(service_type, action);
 
-    let client = reqwest::Client::builder()
-        .http1_title_case_headers()
-        .build()?;
+    let client = Client::builder().http1_title_case_headers().build()?;
 
     let builder = client.post(url).headers(headers).body(envelope);
 
     let response = builder.send().await?;
 
-    response.text().await
+    if !response.status().is_success() {
+        return Err(Error::StatusCodeError {
+            status_code: response.status().as_u16(),
+            message: response.text().await?,
+        });
+    }
+
+    Ok(response)
 }
 
 pub fn default_headers(host: &UpnpHost) -> HeaderMap {

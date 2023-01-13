@@ -1,4 +1,5 @@
 use crate::{
+    error::Result,
     request_helper::{get_api_xml, UpnpHost},
     xml_nodes_camel_case,
 };
@@ -138,12 +139,12 @@ xml_nodes_camel_case! {
     }
 }
 
-pub async fn get_api_description(host: &UpnpHost) -> Result<ApiDescription, reqwest::Error> {
-    let result = get_api_xml(host, "/igddesc.xml").await;
+pub async fn get_api_description(host: &UpnpHost) -> Result<ApiDescription> {
+    let response = get_api_xml(host, "/igddesc.xml").await?;
 
-    let xml_string = result?;
+    let xml_string = response.text().await?;
 
-    let service_description: ApiDescription = from_str(&xml_string).unwrap();
+    let service_description: ApiDescription = from_str(&xml_string)?;
 
     Ok(service_description)
 }
@@ -151,12 +152,12 @@ pub async fn get_api_description(host: &UpnpHost) -> Result<ApiDescription, reqw
 pub async fn get_service_description(
     host: &UpnpHost,
     endpoint: &str,
-) -> Result<ServiceDescription, reqwest::Error> {
-    let result = get_api_xml(host, endpoint).await;
+) -> Result<ServiceDescription> {
+    let response = get_api_xml(host, endpoint).await?;
 
-    let xml_string = result?;
+    let xml_string = response.text().await?;
 
-    let service_description: ServiceDescription = from_str(&xml_string).unwrap();
+    let service_description: ServiceDescription = from_str(&xml_string)?;
 
     Ok(service_description)
 }

@@ -2,7 +2,7 @@ use std::ops::RangeInclusive;
 
 use async_recursion::async_recursion;
 
-use crate::{overview_json, request_helper::UpnpHost};
+use crate::{error::Result, overview_json, request_helper::UpnpHost};
 
 use super::description::{
     get_api_description, get_service_description, ArgumentDirection, StateVariable,
@@ -56,7 +56,7 @@ overview_json! {
     }
 }
 
-pub async fn overview(host: &UpnpHost) -> Result<self::Device, reqwest::Error> {
+pub async fn overview(host: &UpnpHost) -> Result<self::Device> {
     let api_description = get_api_description(host).await?;
 
     let device = create_overview_for_device(host, &api_description.device).await?;
@@ -68,7 +68,7 @@ pub async fn overview(host: &UpnpHost) -> Result<self::Device, reqwest::Error> {
 async fn create_overview_for_device(
     host: &UpnpHost,
     device: &super::description::Device,
-) -> Result<self::Device, reqwest::Error> {
+) -> Result<self::Device> {
     let services: Vec<self::Service> = futures::future::try_join_all(
         device
             .service_list
@@ -80,8 +80,7 @@ async fn create_overview_for_device(
             .iter()
             .map(|service_entry| async move { map_service_from_api(host, service_entry).await }),
     )
-    .await
-    .unwrap();
+    .await?;
 
     let devices: Vec<self::Device> = futures::future::try_join_all(
         device
@@ -94,8 +93,7 @@ async fn create_overview_for_device(
             .iter()
             .map(|sub_device| async move { create_overview_for_device(host, sub_device).await }),
     )
-    .await
-    .unwrap();
+    .await?;
 
     let device_overview = self::Device {
         name: device.friendly_name.clone(),
@@ -115,7 +113,7 @@ async fn create_overview_for_device(
 async fn map_service_from_api(
     host: &UpnpHost,
     service: &super::description::Service,
-) -> Result<self::Service, reqwest::Error> {
+) -> Result<self::Service> {
     let service_description = get_service_description(host, &service.scpd_url).await?;
 
     let argument_types: Vec<StateVariable> = service_description
