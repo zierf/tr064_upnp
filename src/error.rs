@@ -5,6 +5,12 @@ pub type Result<T> = std::result::Result<T, self::Error>;
 #[derive(Debug, Error)]
 pub enum Error {
     #[error(transparent)]
+    Utf8Error(#[from] std::str::Utf8Error),
+    #[error(transparent)]
+    IoError(#[from] std::io::Error),
+    #[error("Couldn't find Internet Gateway Device (IGD)!")]
+    SearchError(String),
+    #[error(transparent)]
     RequestError(#[from] reqwest::Error),
     #[error(transparent)]
     DeserializationError(#[from] serde_xml_rs::Error),

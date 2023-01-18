@@ -1,16 +1,12 @@
 use anyhow::Result;
 
-use fritz_tr064_upnp::{services::*, Schema, UpnpHost, UpnpHostBuilder};
+use fritz_tr064_upnp::Gateway;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
-    let host: UpnpHost = UpnpHostBuilder::new()
-        .name("fritz.box")
-        .port(49000)
-        .schema(Schema::HTTP)
-        .build();
+    let gateway = Gateway::discover(Default::default()).await?;
 
-    let response = wan_common_interface_config::get_addon_infos(&host, None).await?;
+    let response = gateway.get_addon_infos(None).await?;
 
     println!("{:#?}", response);
 

@@ -1,8 +1,4 @@
-use crate::{
-    error::Result,
-    request_helper::{get_api_xml, UpnpHost},
-    xml_nodes_camel_case,
-};
+use crate::{request::get_api_xml, xml_nodes_camel_case, Gateway, Result};
 
 use serde_xml_rs::from_str;
 
@@ -16,6 +12,8 @@ xml_nodes_camel_case! {
 xml_nodes_camel_case! {
     pub struct ApiDescription {
         pub spec_version: SpecVersion,
+        #[serde(rename = "URLBase")]
+        pub url_base: Option<String>,
         pub device: Device,
     }
 
@@ -139,25 +137,24 @@ xml_nodes_camel_case! {
     }
 }
 
-pub async fn get_api_description(host: &UpnpHost) -> Result<ApiDescription> {
-    let response = get_api_xml(host, "/igddesc.xml").await?;
+impl Gateway {
+    pub async fn api_description(&self) -> Result<ApiDescription> {
+        let response = get_api_xml(self, "/igddesc.xml").await?;
 
-    let xml_string = response.text().await?;
+        let xml_string = response.text().await?;
 
-    let service_description: ApiDescription = from_str(&xml_string)?;
+        let service_description: ApiDescription = from_str(&xml_string)?;
 
-    Ok(service_description)
-}
+        Ok(service_description)
+    }
 
-pub async fn get_service_description(
-    host: &UpnpHost,
-    endpoint: &str,
-) -> Result<ServiceDescription> {
-    let response = get_api_xml(host, endpoint).await?;
+    pub async fn service_description(&self, endpoint: &str) -> Result<ServiceDescription> {
+        let response = get_api_xml(self, endpoint).await?;
 
-    let xml_string = response.text().await?;
+        let xml_string = response.text().await?;
 
-    let service_description: ServiceDescription = from_str(&xml_string)?;
+        let service_description: ServiceDescription = from_str(&xml_string)?;
 
-    Ok(service_description)
+        Ok(service_description)
+    }
 }

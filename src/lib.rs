@@ -2,8 +2,17 @@
 
 mod macros;
 
-pub mod error;
-pub mod request_helper;
-pub mod services;
+mod error;
 
-pub use request_helper::{Schema, UpnpHost, UpnpHostBuilder};
+pub mod gateway;
+pub mod request;
+
+pub use error::{Error, Result};
+pub use gateway::{Gateway, GatewayBuilder, SearchOptions};
+
+#[derive(Clone, Debug, Default, PartialEq)]
+pub enum Scheme {
+    #[default]
+    HTTP,
+    HTTPS,
+}

@@ -1,12 +1,12 @@
 use anyhow::Result;
 
-use fritz_tr064_upnp::{services, UpnpHost};
+use fritz_tr064_upnp::Gateway;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
-    let host: UpnpHost = Default::default();
+    let gateway = Gateway::discover(Default::default()).await?;
 
-    let overview = services::overview::overview(&host).await?;
+    let overview = gateway.overview().await?;
 
     println!("{:#?}", overview);
 

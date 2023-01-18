@@ -2,11 +2,8 @@ use std::ops::RangeInclusive;
 
 use async_recursion::async_recursion;
 
-use crate::{error::Result, overview_json, request_helper::UpnpHost};
-
-use super::description::{
-    get_api_description, get_service_description, ArgumentDirection, StateVariable,
-};
+use super::services::description::{self, ArgumentDirection, StateVariable};
+use crate::{overview_json, Gateway, Result};
 
 overview_json! {
     pub struct Device {
@@ -56,29 +53,31 @@ overview_json! {
     }
 }
 
-pub async fn overview(host: &UpnpHost) -> Result<self::Device> {
-    let api_description = get_api_description(host).await?;
+impl Gateway {
+    pub async fn overview(&self) -> Result<self::Device> {
+        let api_description = self.api_description().await?;
 
-    let device = create_overview_for_device(host, &api_description.device).await?;
+        let device = create_overview_for_device(self, &api_description.device).await?;
 
-    Ok(device)
+        Ok(device)
+    }
 }
 
 #[async_recursion]
 async fn create_overview_for_device(
-    host: &UpnpHost,
-    device: &super::description::Device,
+    gateway: &Gateway,
+    device: &description::Device,
 ) -> Result<self::Device> {
     let services: Vec<self::Service> = futures::future::try_join_all(
         device
             .service_list
             .clone()
-            .unwrap_or_else(|| super::description::ServiceList {
+            .unwrap_or_else(|| description::ServiceList {
                 services: Vec::new(),
             })
             .services
             .iter()
-            .map(|service_entry| async move { map_service_from_api(host, service_entry).await }),
+            .map(|service_entry| async move { map_service_from_api(gateway, service_entry).await }),
     )
     .await?;
 
@@ -86,12 +85,12 @@ async fn create_overview_for_device(
         device
             .device_list
             .clone()
-            .unwrap_or_else(|| super::description::DeviceList {
+            .unwrap_or_else(|| description::DeviceList {
                 devices: Vec::new(),
             })
             .devices
             .iter()
-            .map(|sub_device| async move { create_overview_for_device(host, sub_device).await }),
+            .map(|sub_device| async move { create_overview_for_device(gateway, sub_device).await }),
     )
     .await?;
 
@@ -111,10 +110,10 @@ async fn create_overview_for_device(
 }
 
 async fn map_service_from_api(
-    host: &UpnpHost,
-    service: &super::description::Service,
+    gateway: &Gateway,
+    service: &description::Service,
 ) -> Result<self::Service> {
-    let service_description = get_service_description(host, &service.scpd_url).await?;
+    let service_description = gateway.service_description(&service.scpd_url).await?;
 
     let argument_types: Vec<StateVariable> = service_description
         .service_state_table
@@ -158,20 +157,18 @@ async fn map_service_from_api(
     Ok(service)
 }
 
-fn extract_arguments_from_action(
-    action: &super::description::Action,
-) -> Vec<super::description::Argument> {
+fn extract_arguments_from_action(action: &description::Action) -> Vec<description::Argument> {
     action
         .argument_list
         .clone()
-        .unwrap_or_else(|| super::description::ArgumentList {
+        .unwrap_or_else(|| description::ArgumentList {
             arguments: Vec::new(),
         })
         .arguments
 }
 
 fn combine_argument_and_type(
-    argument: &super::description::Argument,
+    argument: &description::Argument,
     argument_types: &[StateVariable],
 ) -> self::Argument {
     let arg_type: Option<&StateVariable> = argument_types
