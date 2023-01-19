@@ -139,7 +139,7 @@ xml_nodes_camel_case! {
 
 impl Gateway {
     pub async fn api_description(&self) -> Result<ApiDescription> {
-        let response = get_api_xml(self, "/igddesc.xml").await?;
+        let response = get_api_xml(self, &self.root_url).await?;
 
         let xml_string = response.text().await?;
 
