@@ -5,6 +5,8 @@ pub type Result<T> = std::result::Result<T, self::Error>;
 #[derive(Debug, Error)]
 pub enum Error {
     #[error(transparent)]
+    UrlParseError(#[from] url::ParseError),
+    #[error(transparent)]
     Utf8Error(#[from] std::str::Utf8Error),
     #[error(transparent)]
     IoError(#[from] std::io::Error),

@@ -1,6 +1,7 @@
 mod overview;
 pub mod services;
 
+use std::marker::PhantomData;
 use std::net::{Ipv4Addr, SocketAddr, UdpSocket};
 use std::str;
 use std::time::Duration;
@@ -12,32 +13,34 @@ use crate::{Error, Result, Scheme};
 pub static BROADCAST_IPV4: &str = "239.255.255.250:1900";
 pub static BROADCAST_IPV6: &str = "[FF02::C]:1900";
 
-pub(crate) static DEFAULT_HOSTNAME: &str = "fritz.box";
-pub(crate) static DEFAULT_HOSTPORT: u16 = 49000;
+pub static DEFAULT_HOSTNAME: &str = "fritz.box";
+pub static DEFAULT_HOSTPORT: u16 = 49000;
+pub static DEFAULT_ROOT_URL: &str = "/igddesc.xml";
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Gateway {
     pub host: Host<String>,
     pub port: u16,
     pub scheme: Scheme,
-    pub root_url: Option<String>,
+    pub root_url: String,
 }
 
 impl Default for Gateway {
     fn default() -> Self {
         // defaults for a Fritz!Box
         Self {
-            host: Host::parse(DEFAULT_HOSTNAME).expect("Default host should be parsable."),
+            host: Host::parse(DEFAULT_HOSTNAME).expect("Default host should be parsable as host."),
             port: DEFAULT_HOSTPORT,
             scheme: Scheme::HTTP,
-            root_url: Some("/igddesc.xml".to_owned()),
+            root_url: DEFAULT_ROOT_URL.to_owned(),
         }
     }
 }
 
 impl Gateway {
-    pub fn builder() -> GatewayBuilder {
-        GatewayBuilder::default()
+    /// Create a new gateway builder.
+    pub fn builder() -> GatewayBuilder<NoHost, NoRootUrl, NotSealed> {
+        GatewayBuilder::new()
     }
 
     pub async fn discover(options: SearchOptions) -> Result<Gateway> {
@@ -68,44 +71,115 @@ MX: 2
             host,
             port,
             scheme,
-            root_url: Some(root_url),
+            root_url,
         })
     }
 }
 
 #[derive(Clone, Debug, Default)]
-pub struct GatewayBuilder {
-    gateway: Gateway,
+pub struct GatewayBuilder<H, U, S> {
+    host: H,
+    port: u16,
+    scheme: Scheme,
+    root_url: U,
+    marker_seal: PhantomData<S>,
 }
 
-impl GatewayBuilder {
+// region:    --- GatewayBuilder States
+#[derive(Clone, Debug, Default)]
+pub struct Sealed;
+#[derive(Clone, Debug, Default)]
+pub struct NotSealed;
+
+#[derive(Clone, Debug, Default)]
+pub struct NoHost;
+#[derive(Clone, Debug, Default)]
+pub struct WithHost(String); // Host<String>
+
+#[derive(Clone, Debug, Default)]
+pub struct NoRootUrl;
+#[derive(Clone, Debug, Default)]
+pub struct WithRootUrl(String);
+// endregion: --- GatewayBuilder States
+
+impl GatewayBuilder<NoHost, NoRootUrl, NotSealed> {
+    /// Create a new gateway builder.
     pub fn new() -> Self {
-        let builder: Self = Default::default();
-        builder
+        Self {
+            host: NoHost,
+            port: DEFAULT_HOSTPORT,
+            scheme: Scheme::HTTP,
+            root_url: NoRootUrl,
+            marker_seal: PhantomData,
+        }
+    }
+}
+
+impl<U, M> GatewayBuilder<U, M, NotSealed> {
+    /// Seal builder and prevent further modifications.
+    ///
+    /// Builder can still be cloned afterwards to call the `build` method multiple times.
+    pub fn seal(self) -> GatewayBuilder<U, M, Sealed> {
+        GatewayBuilder {
+            host: self.host,
+            port: self.port,
+            scheme: self.scheme,
+            root_url: self.root_url,
+            marker_seal: PhantomData,
+        }
+    }
+}
+
+impl<S> GatewayBuilder<WithHost, WithRootUrl, S> {
+    /// Create a gateway with given builder options.
+    pub fn build(self) -> Result<Gateway> {
+        let gateway = Gateway {
+            host: Host::parse(&self.host.0)?,
+            port: self.port,
+            scheme: self.scheme,
+            root_url: self.root_url.0,
+        };
+
+        Ok(gateway)
+    }
+}
+
+impl<H, U> GatewayBuilder<H, U, NotSealed> {
+    /// Gateway hostname (`fritz.box`), IPv4 address (`192.168.178.1`) or IPv6 address (`[1234:5678:90ab::10a]`).
+    pub fn host(self, host: impl Into<String>) -> GatewayBuilder<WithHost, U, NotSealed> {
+        GatewayBuilder {
+            host: WithHost(host.into()),
+            port: self.port,
+            scheme: self.scheme,
+            root_url: self.root_url,
+            marker_seal: PhantomData,
+        }
     }
 
-    pub fn host(mut self, host: impl Into<Host>) -> Self {
-        self.gateway.host = host.into();
-        self
-    }
-
+    /// Gateway UPnP port.
     pub fn port(mut self, port: u16) -> Self {
-        self.gateway.port = port;
+        self.port = port;
         self
     }
 
+    /// Gateway UPnP protocol scheme.
     pub fn scheme(mut self, scheme: Scheme) -> Self {
-        self.gateway.scheme = scheme;
+        self.scheme = scheme;
         self
     }
 
-    pub fn root_url(mut self, root_url: Option<String>) -> Self {
-        self.gateway.root_url = root_url;
-        self
-    }
-
-    pub fn build(&self) -> Gateway {
-        self.gateway.clone()
+    /// Location to XML with api description.
+    pub fn root_url(
+        self,
+        root_url: impl Into<String>,
+    ) -> GatewayBuilder<H, WithRootUrl, NotSealed> {
+        GatewayBuilder {
+            host: self.host,
+            port: self.port,
+            scheme: self.scheme,
+            root_url: WithRootUrl(root_url.into()),
+            marker_seal: PhantomData,
+        }
     }
 }
 
