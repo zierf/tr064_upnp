@@ -24,8 +24,7 @@ async fn main() -> Result<()> {
         IpAddr::V6(_) => BROADCAST_IPV6,
         IpAddr::V4(_) => BROADCAST_IPV4,
     })
-    .parse::<SocketAddr>()
-    .unwrap();
+    .parse::<SocketAddr>()?;
 
     let options = SearchOptions {
         bind_address: SocketAddr::new(bind_address, 0),
@@ -34,7 +33,7 @@ async fn main() -> Result<()> {
     };
 
     // there is also a default implementation for SearchOptions (using IPv4)
-    // let options: SearchOptions = Default::default();
+    // let options = SearchOptions::default();
 
     let gateway = Gateway::discover(options).await?;
 
