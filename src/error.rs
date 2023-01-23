@@ -14,13 +14,13 @@ pub enum Error {
     IoError(#[from] std::io::Error),
     #[error("Couldn't find Internet Gateway Device (IGD)!")]
     SearchError(String),
-    #[cfg(feature = "reqwest")]
+    #[cfg(not(target_os = "espidf"))]
     #[error(transparent)]
     RequestError(#[from] reqwest::Error),
-    #[cfg(feature = "esp32")]
+    #[cfg(target_os = "espidf")]
     #[error(transparent)]
     EspError(#[from] esp_idf_sys::EspError),
-    #[cfg(feature = "esp32")]
+    #[cfg(target_os = "espidf")]
     #[error(transparent)]
     RequestError(#[from] esp_idf_svc::errors::EspIOError),
     #[error(transparent)]

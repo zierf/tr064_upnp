@@ -1,11 +1,11 @@
-#[cfg(feature = "esp32")]
+#[cfg(target_os = "espidf")]
 mod esp32;
-#[cfg(feature = "reqwest")]
+#[cfg(not(target_os = "espidf"))]
 mod reqwest;
 
-#[cfg(feature = "esp32")]
+#[cfg(target_os = "espidf")]
 pub use self::esp32::*;
-#[cfg(feature = "reqwest")]
+#[cfg(not(target_os = "espidf"))]
 pub use self::reqwest::*;
 
 use std::ops::Add;
