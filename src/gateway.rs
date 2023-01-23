@@ -43,7 +43,7 @@ impl Gateway {
         GatewayBuilder::new()
     }
 
-    pub async fn discover(options: SearchOptions) -> Result<Gateway> {
+    pub fn discover(options: SearchOptions) -> Result<Gateway> {
         let socket = UdpSocket::bind(options.bind_address)?;
         socket.set_read_timeout(options.timeout)?;
 

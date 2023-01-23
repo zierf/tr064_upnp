@@ -61,19 +61,17 @@ xml_nodes_pascal_case! {
 }
 
 impl Gateway {
-    pub async fn get_addon_infos(&self, version: Option<usize>) -> Result<GetAddonInfosResponse> {
-        let response = self
-            .send_action(
-                &format!("/igdupnp/control/WANCommonIFC{}", version.unwrap_or(1)),
-                &format!(
-                    "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:{}",
-                    version.unwrap_or(1)
-                ),
-                "GetAddonInfos",
-            )
-            .await?;
+    pub fn get_addon_infos(&self, version: Option<usize>) -> Result<GetAddonInfosResponse> {
+        let response = self.send_action(
+            &format!("/igdupnp/control/WANCommonIFC{}", version.unwrap_or(1)),
+            &format!(
+                "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:{}",
+                version.unwrap_or(1)
+            ),
+            "GetAddonInfos",
+        )?;
 
-        let xml_string = response.text().await?;
+        let xml_string = response.text()?;
 
         let addon_infos: Envelope = from_str(&xml_string)?;
 

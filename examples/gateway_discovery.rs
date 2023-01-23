@@ -8,10 +8,9 @@ use anyhow::Result;
 
 use fritz_tr064_upnp::{gateway::BROADCAST_IPV4, gateway::BROADCAST_IPV6, Gateway, SearchOptions};
 
-#[tokio::main(flavor = "current_thread")]
 /// Run with `RUST_BACKTRACE=1 cargo run --example gateway_discovery v6`
 /// to run discovery over IPv6.
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     let ip_version = env::args().nth(1).unwrap_or_else(|| "v4".into());
 
     let bind_address = if ip_version == "v6" {
@@ -35,7 +34,7 @@ async fn main() -> Result<()> {
     // there is also a default implementation for SearchOptions (using IPv4)
     // let options = SearchOptions::default();
 
-    let gateway = Gateway::discover(options).await?;
+    let gateway = Gateway::discover(options)?;
 
     println!("{:#?}", gateway);
 

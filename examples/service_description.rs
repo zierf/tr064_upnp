@@ -5,8 +5,7 @@ use fritz_tr064_upnp::{
     Gateway, Scheme,
 };
 
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     let gateway_builder = Gateway::builder()
         .host(DEFAULT_HOSTNAME)
         .port(DEFAULT_HOSTPORT)
@@ -16,8 +15,8 @@ async fn main() -> Result<()> {
 
     let gateway = gateway_builder.build()?;
 
-    let dummy_description = gateway.service_description("/any.xml").await?;
-    let response = gateway.service_description("/igdicfgSCPD.xml").await?;
+    let dummy_description = gateway.service_description("/any.xml")?;
+    let response = gateway.service_description("/igdicfgSCPD.xml")?;
 
     println!("{:#?}", dummy_description);
     println!("{:#?}", response);

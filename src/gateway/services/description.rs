@@ -138,20 +138,20 @@ xml_nodes_camel_case! {
 }
 
 impl Gateway {
-    pub async fn api_description(&self) -> Result<ApiDescription> {
-        let response = get_api_xml(self, &self.root_url).await?;
+    pub fn api_description(&self) -> Result<ApiDescription> {
+        let response = get_api_xml(self, &self.root_url)?;
 
-        let xml_string = response.text().await?;
+        let xml_string = response.text()?;
 
         let service_description: ApiDescription = from_str(&xml_string)?;
 
         Ok(service_description)
     }
 
-    pub async fn service_description(&self, endpoint: &str) -> Result<ServiceDescription> {
-        let response = get_api_xml(self, endpoint).await?;
+    pub fn service_description(&self, endpoint: &str) -> Result<ServiceDescription> {
+        let response = get_api_xml(self, endpoint)?;
 
-        let xml_string = response.text().await?;
+        let xml_string = response.text()?;
 
         let service_description: ServiceDescription = from_str(&xml_string)?;
 

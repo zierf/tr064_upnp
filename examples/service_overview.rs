@@ -2,11 +2,10 @@ use anyhow::Result;
 
 use fritz_tr064_upnp::{Gateway, SearchOptions};
 
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> Result<()> {
-    let gateway = Gateway::discover(SearchOptions::default()).await?;
+fn main() -> Result<()> {
+    let gateway = Gateway::discover(SearchOptions::default())?;
 
-    let overview = gateway.overview().await?;
+    let overview = gateway.overview()?;
 
     println!("{:#?}", overview);
 

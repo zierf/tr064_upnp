@@ -1,25 +1,25 @@
 use std::ops::Add;
 
 use reqwest::{
+    blocking::{Client, Response},
     header::{HeaderMap, HeaderValue, CONTENT_TYPE, USER_AGENT},
-    Client, Response,
 };
 
 use crate::{gateway::DEFAULT_HOSTNAME, Error, Gateway, Result, Scheme};
 
-pub(crate) async fn get_api_xml(gateway: &Gateway, endpoint: &str) -> Result<Response> {
+pub(crate) fn get_api_xml(gateway: &Gateway, endpoint: &str) -> Result<Response> {
     let url = gateway.endpoint_url(endpoint);
 
     let client = Client::builder().http1_title_case_headers().build()?;
 
     let builder = client.get(url).headers(gateway.default_headers());
 
-    let response = builder.send().await?;
+    let response = builder.send()?;
 
     if !response.status().is_success() {
         return Err(Error::StatusCodeError {
             status_code: response.status().as_u16(),
-            message: response.text().await?,
+            message: response.text()?,
         });
     }
 
@@ -44,7 +44,7 @@ pub fn build_envelope(service_type: &str, action_name: &str) -> String {
 }
 
 impl Gateway {
-    pub async fn send_action(
+    pub fn send_action(
         &self,
         endpoint: &str,
         service_type: &str,
@@ -68,12 +68,12 @@ impl Gateway {
 
         let builder = client.post(url).headers(headers).body(envelope);
 
-        let response = builder.send().await?;
+        let response = builder.send()?;
 
         if !response.status().is_success() {
             return Err(Error::StatusCodeError {
                 status_code: response.status().as_u16(),
-                message: response.text().await?,
+                message: response.text()?,
             });
         }
 
