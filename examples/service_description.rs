@@ -1,14 +1,14 @@
 use anyhow::Result;
 
 use fritz_tr064_upnp::{
-    gateway::{DEFAULT_HOSTNAME, DEFAULT_HOSTPORT, DEFAULT_ROOT_URL},
+    gateway::{DEFAULT_HOST_NAME, DEFAULT_HOST_PORT, DEFAULT_ROOT_URL},
     Gateway, Scheme,
 };
 
 fn main() -> Result<()> {
     let gateway_builder = Gateway::builder()
-        .host(DEFAULT_HOSTNAME)
-        .port(DEFAULT_HOSTPORT)
+        .host(DEFAULT_HOST_NAME)
+        .port(DEFAULT_HOST_PORT)
         .scheme(Scheme::HTTP)
         .root_url(DEFAULT_ROOT_URL)
         .seal();

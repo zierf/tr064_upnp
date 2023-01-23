@@ -13,8 +13,8 @@ use crate::{Error, Result, Scheme};
 pub static BROADCAST_IPV4: &str = "239.255.255.250:1900";
 pub static BROADCAST_IPV6: &str = "[FF02::C]:1900";
 
-pub static DEFAULT_HOSTNAME: &str = "fritz.box";
-pub static DEFAULT_HOSTPORT: u16 = 49000;
+pub static DEFAULT_HOST_NAME: &str = "fritz.box";
+pub static DEFAULT_HOST_PORT: u16 = 49000;
 pub static DEFAULT_ROOT_URL: &str = "/igddesc.xml";
 
 #[derive(Clone, Debug, PartialEq)]
@@ -29,10 +29,10 @@ impl Default for Gateway {
     fn default() -> Self {
         // defaults for a Fritz!Box
         Self {
-            host: Host::parse(DEFAULT_HOSTNAME).expect("Default host should be parsable as host."),
-            port: DEFAULT_HOSTPORT,
+            host: Host::parse(DEFAULT_HOST_NAME).expect("Default host should be parsable as host."),
+            port: DEFAULT_HOST_PORT,
             scheme: Scheme::HTTP,
-            root_url: DEFAULT_ROOT_URL.to_owned(),
+            root_url: DEFAULT_ROOT_URL.to_string(),
         }
     }
 }
@@ -107,7 +107,7 @@ impl GatewayBuilder<NoHost, NoRootUrl, NotSealed> {
     pub fn new() -> Self {
         Self {
             host: NoHost,
-            port: DEFAULT_HOSTPORT,
+            port: DEFAULT_HOST_PORT,
             scheme: Scheme::HTTP,
             root_url: NoRootUrl,
             marker_seal: PhantomData,
@@ -232,7 +232,7 @@ fn parse_search_response(message: &str) -> Result<(Scheme, Host<String>, u16, St
                     .port_or_known_default()
                     .ok_or(Error::SearchError(message.into()))?;
 
-                return Ok((scheme, host, port, url.path().to_owned()));
+                return Ok((scheme, host, port, url.path().to_string()));
             }
         }
     }
